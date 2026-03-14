@@ -1,0 +1,4 @@
+# Do not commit Cursor/IDE metadata – may contain user email, paths, chat history
+.specstory/
+.vscode/
+.cursorindexingignore
