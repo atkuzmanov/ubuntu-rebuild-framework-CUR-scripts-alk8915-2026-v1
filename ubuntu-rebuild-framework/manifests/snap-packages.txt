@@ -1,0 +1,7 @@
+# format: package|args|feature_flag(optional)
+code|--classic|
+intellij-idea-community|--classic|ENABLE_WORK_TOOLS
+postman||ENABLE_WORK_TOOLS
+discord||ENABLE_MEDIA_TOOLS
+spotify||ENABLE_MEDIA_TOOLS
+telegram-desktop||INSTALL_GUI_APPS

@@ -1,0 +1,3 @@
+n8n
+markdownlint-cli
+@openapitools/openapi-generator-cli

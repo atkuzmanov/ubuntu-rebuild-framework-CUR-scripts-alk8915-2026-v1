@@ -1,0 +1,16 @@
+# Manual / vendor-managed software inventory
+# Keep this file as the canonical list of apps that are not cleanly managed through apt/snap/flatpak/pipx/cargo/uv.
+# format: name | type | source | notes
+Warp Terminal | deb repo or vendor installer | vendor | optional if not installed via apt repo
+Google Chrome | deb repo | vendor | if used
+Brave Browser | deb repo | vendor | if used
+Microsoft Edge | deb repo | vendor | if used
+Docker Desktop | deb | vendor | only if preferred over docker-ce
+Insync | apt repo/deb | vendor | if used
+Cryptomator | deb/AppImage | vendor | if used
+Cursor | AppImage/deb | vendor | if used
+Ledger Live | AppImage | vendor | can require libfuse2 compatibility
+ProtonVPN | vendor repo | vendor | Ubuntu package compatibility can vary
+Brother scanner driver | deb | vendor | model-specific, usually manual
+VirtualDJ | deb | vendor | manual if desired
+Interactive Brokers TWS | tarball/script | vendor | manual if desired

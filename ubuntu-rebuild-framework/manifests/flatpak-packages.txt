@@ -1,0 +1,5 @@
+# format: app_id|feature_flag(optional)
+com.bitwarden.desktop|INSTALL_GUI_APPS
+org.signal.Signal|INSTALL_GUI_APPS
+md.obsidian.Obsidian|INSTALL_GUI_APPS
+com.usebottles.bottles|ENABLE_MEDIA_TOOLS
