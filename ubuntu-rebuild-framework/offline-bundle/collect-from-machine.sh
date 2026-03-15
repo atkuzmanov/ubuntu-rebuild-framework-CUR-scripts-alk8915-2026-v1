@@ -66,10 +66,11 @@ if [[ -s "$APT_DIR/apt-manual.txt" ]]; then
   sudo apt-get update
   mapfile -t APT_MANUAL < "$APT_DIR/apt-manual.txt"
   if ((${#APT_MANUAL[@]} > 0)); then
+    # --reinstall forces download of .deb files even when packages are already installed
     sudo apt-get \
       -o Dir::Cache::archives="$APT_DIR/archives" \
       -o APT::Keep-Downloaded-Packages=true \
-      -y --download-only install "${APT_MANUAL[@]}" \
+      -y --download-only --reinstall install "${APT_MANUAL[@]}" \
       | tee "$LOG_DIR/apt-download.log" || log_warn "Some APT packages could not be downloaded"
   fi
 fi
