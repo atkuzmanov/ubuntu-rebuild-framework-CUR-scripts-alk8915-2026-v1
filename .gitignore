@@ -1,3 +1,18 @@
+# Build/run artifacts
+logs/
+*.log
+
+# State exports – generated from live machine; review before merging into manifests
+# state/exports/
+# *-exported.txt
+
+# OS / editor
+.DS_Store
+*.swp
+*.swo
+*~
+.idea/
+
 # Do not commit Cursor/IDE metadata – may contain user email, paths, chat history
 .specstory/
 .vscode/

@@ -1,0 +1,292 @@
+{
+    "pipx_spec_version": "0.1",
+    "venvs": {
+        "httpie": {
+            "metadata": {
+                "injected_packages": {},
+                "main_package": {
+                    "app_paths": [
+                        {
+                            "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/bin/http",
+                            "__type__": "Path"
+                        },
+                        {
+                            "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/bin/httpie",
+                            "__type__": "Path"
+                        },
+                        {
+                            "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/bin/https",
+                            "__type__": "Path"
+                        }
+                    ],
+                    "app_paths_of_dependencies": {
+                        "charset-normalizer": [
+                            {
+                                "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/bin/normalizer",
+                                "__type__": "Path"
+                            }
+                        ],
+                        "markdown-it-py": [
+                            {
+                                "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/bin/markdown-it",
+                                "__type__": "Path"
+                            }
+                        ],
+                        "pygments": [
+                            {
+                                "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/bin/pygmentize",
+                                "__type__": "Path"
+                            }
+                        ]
+                    },
+                    "apps": [
+                        "http",
+                        "httpie",
+                        "https"
+                    ],
+                    "apps_of_dependencies": [
+                        "normalizer",
+                        "pygmentize",
+                        "markdown-it"
+                    ],
+                    "include_apps": true,
+                    "include_dependencies": false,
+                    "man_pages": [
+                        "man1/http.1",
+                        "man1/httpie.1",
+                        "man1/https.1"
+                    ],
+                    "man_pages_of_dependencies": [],
+                    "man_paths": [
+                        {
+                            "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/share/man/man1/http.1",
+                            "__type__": "Path"
+                        },
+                        {
+                            "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/share/man/man1/httpie.1",
+                            "__type__": "Path"
+                        },
+                        {
+                            "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/httpie/share/man/man1/https.1",
+                            "__type__": "Path"
+                        }
+                    ],
+                    "man_paths_of_dependencies": {},
+                    "package": "httpie",
+                    "package_or_url": "httpie",
+                    "package_version": "3.2.4",
+                    "pip_args": [],
+                    "suffix": ""
+                },
+                "pipx_metadata_version": "0.3",
+                "python_version": "Python 3.12.3",
+                "venv_args": []
+            }
+        },
+        "mkdocs": {
+            "metadata": {
+                "injected_packages": {
+                    "mkdocs-material": {
+                        "app_paths": [],
+                        "app_paths_of_dependencies": {
+                            "babel": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/pybabel",
+                                    "__type__": "Path"
+                                }
+                            ],
+                            "charset-normalizer": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/normalizer",
+                                    "__type__": "Path"
+                                }
+                            ],
+                            "ghp-import": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/ghp-import",
+                                    "__type__": "Path"
+                                }
+                            ],
+                            "markdown": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/markdown_py",
+                                    "__type__": "Path"
+                                }
+                            ],
+                            "mkdocs": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/mkdocs",
+                                    "__type__": "Path"
+                                }
+                            ],
+                            "mkdocs-get-deps": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/mkdocs-get-deps",
+                                    "__type__": "Path"
+                                }
+                            ],
+                            "pygments": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/pygmentize",
+                                    "__type__": "Path"
+                                }
+                            ],
+                            "watchdog": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/watchmedo",
+                                    "__type__": "Path"
+                                }
+                            ]
+                        },
+                        "apps": [],
+                        "apps_of_dependencies": [
+                            "pybabel",
+                            "markdown_py",
+                            "mkdocs",
+                            "ghp-import",
+                            "mkdocs-get-deps",
+                            "watchmedo",
+                            "pygmentize",
+                            "normalizer"
+                        ],
+                        "include_apps": false,
+                        "include_dependencies": false,
+                        "man_pages": [],
+                        "man_pages_of_dependencies": [],
+                        "man_paths": [],
+                        "man_paths_of_dependencies": {},
+                        "package": "mkdocs-material",
+                        "package_or_url": "mkdocs-material",
+                        "package_version": "9.7.4",
+                        "pip_args": [],
+                        "suffix": ""
+                    },
+                    "pymdown-extensions": {
+                        "app_paths": [],
+                        "app_paths_of_dependencies": {
+                            "markdown": [
+                                {
+                                    "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/markdown_py",
+                                    "__type__": "Path"
+                                }
+                            ]
+                        },
+                        "apps": [],
+                        "apps_of_dependencies": [
+                            "markdown_py"
+                        ],
+                        "include_apps": false,
+                        "include_dependencies": false,
+                        "man_pages": [],
+                        "man_pages_of_dependencies": [],
+                        "man_paths": [],
+                        "man_paths_of_dependencies": {},
+                        "package": "pymdown-extensions",
+                        "package_or_url": "pymdown-extensions",
+                        "package_version": "10.21",
+                        "pip_args": [],
+                        "suffix": ""
+                    }
+                },
+                "main_package": {
+                    "app_paths": [
+                        {
+                            "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/mkdocs",
+                            "__type__": "Path"
+                        }
+                    ],
+                    "app_paths_of_dependencies": {
+                        "ghp-import": [
+                            {
+                                "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/ghp-import",
+                                "__type__": "Path"
+                            }
+                        ],
+                        "markdown": [
+                            {
+                                "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/markdown_py",
+                                "__type__": "Path"
+                            }
+                        ],
+                        "mkdocs-get-deps": [
+                            {
+                                "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/mkdocs-get-deps",
+                                "__type__": "Path"
+                            }
+                        ],
+                        "watchdog": [
+                            {
+                                "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/mkdocs/bin/watchmedo",
+                                "__type__": "Path"
+                            }
+                        ]
+                    },
+                    "apps": [
+                        "mkdocs"
+                    ],
+                    "apps_of_dependencies": [
+                        "ghp-import",
+                        "markdown_py",
+                        "mkdocs-get-deps",
+                        "watchmedo"
+                    ],
+                    "include_apps": true,
+                    "include_dependencies": false,
+                    "man_pages": [],
+                    "man_pages_of_dependencies": [],
+                    "man_paths": [],
+                    "man_paths_of_dependencies": {},
+                    "package": "mkdocs",
+                    "package_or_url": "mkdocs",
+                    "package_version": "1.6.1",
+                    "pip_args": [],
+                    "suffix": ""
+                },
+                "pipx_metadata_version": "0.3",
+                "python_version": "Python 3.12.3",
+                "venv_args": []
+            }
+        },
+        "protonup": {
+            "metadata": {
+                "injected_packages": {},
+                "main_package": {
+                    "app_paths": [
+                        {
+                            "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/protonup/bin/protonup",
+                            "__type__": "Path"
+                        }
+                    ],
+                    "app_paths_of_dependencies": {
+                        "charset-normalizer": [
+                            {
+                                "__Path__": "/home/ltp15vg2ub1/.local/share/pipx/venvs/protonup/bin/normalizer",
+                                "__type__": "Path"
+                            }
+                        ]
+                    },
+                    "apps": [
+                        "protonup"
+                    ],
+                    "apps_of_dependencies": [
+                        "normalizer"
+                    ],
+                    "include_apps": true,
+                    "include_dependencies": false,
+                    "man_pages": [],
+                    "man_pages_of_dependencies": [],
+                    "man_paths": [],
+                    "man_paths_of_dependencies": {},
+                    "package": "protonup",
+                    "package_or_url": "protonup",
+                    "package_version": "0.1.5",
+                    "pip_args": [],
+                    "suffix": ""
+                },
+                "pipx_metadata_version": "0.3",
+                "python_version": "Python 3.12.3",
+                "venv_args": []
+            }
+        }
+    }
+}
