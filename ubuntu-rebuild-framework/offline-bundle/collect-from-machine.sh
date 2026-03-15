@@ -10,6 +10,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUNDLE_DIR="$(cd "$SCRIPT_DIR" && pwd)"
 ROOT_DIR="$(cd "$BUNDLE_DIR/.." && pwd)"
 CACHE_ROOT="${1:-$BUNDLE_DIR/clone-cache}"
+# User to own cache files (in case sudo creates root-owned files); used for chown at end
+CACHE_OWNER_UID="${SUDO_UID:-$(id -u)}"
+CACHE_OWNER_GID="${SUDO_GID:-$(id -g)}"
 
 APT_DIR="$CACHE_ROOT/apt"
 SNAP_DIR="$CACHE_ROOT/snap"
@@ -21,6 +24,7 @@ META_DIR="$CACHE_ROOT/meta"
 LOG_DIR="$CACHE_ROOT/logs"
 
 if [[ -f "$ROOT_DIR/lib/common.sh" && -f "$ROOT_DIR/lib/logging.sh" ]]; then
+  export RUN_LOG="${RUN_LOG:-/dev/null}"
   source "$ROOT_DIR/lib/common.sh"
   source "$ROOT_DIR/lib/logging.sh"
   log_info "Clone-from-machine: writing cache to $CACHE_ROOT"
@@ -155,6 +159,10 @@ Manual installers (from clone). Add vendor .deb, AppImages, etc. here.
 See MANUAL-SOFTWARE-NOTES.txt for install steps.
 TXT
 [[ -f "$MANUAL_DIR/MANUAL-SOFTWARE-NOTES.txt" ]] || printf '%s\n' "# Add notes: installer name, how to install, root/license/post-install" > "$MANUAL_DIR/MANUAL-SOFTWARE-NOTES.txt"
+
+# Any root-owned files (e.g. apt/archives from sudo apt-get) must be owned by the invoker so find/sha256sum and copying work
+log_info "Fixing cache ownership"
+sudo chown -R "$CACHE_OWNER_UID:$CACHE_OWNER_GID" "$CACHE_ROOT" 2>/dev/null || true
 
 # Checksums
 log_info "Creating SHA256SUMS"
