@@ -14,7 +14,9 @@ This folder lets you **download all software** on a machine with internet, store
 
 Captures whatever is currently installed (apt-mark manual, snap list, flatpak list, pip --user, pipx) into a separate cache. Use when you want to replicate this machine’s software set without maintaining manifests.
 
-1. **On the source machine (with internet):** Run `./collect-from-machine.sh`. This creates `clone-cache/` (or pass a path: `./collect-from-machine.sh /media/drive/clone-cache`).
+1. **On the source machine (with internet):** Run `./collect-from-machine.sh`. This creates `clone-cache/` (or pass a path: `./collect-from-machine.sh /media/drive/clone-cache`).  
+   To **only export lists** of installed software (no downloads):  
+   `./collect-from-machine.sh --lists-only [output-dir]` — writes apt, snap, flatpak, pip, pipx and meta list files only.
 2. **Copy `clone-cache/`** and `install-from-clone-cache.sh` to the target (or the whole `offline-bundle/` folder).
 3. **On the target (offline):** Run `./install-from-clone-cache.sh [path-to-clone-cache]`.
 

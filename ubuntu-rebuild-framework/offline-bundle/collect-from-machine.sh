@@ -3,13 +3,23 @@ set -Eeuo pipefail
 
 # Clone-this-machine: capture what's installed on the current system into a cache
 # for offline install on another machine. No profile or manifests; uses live system state.
-# Usage: ./collect-from-machine.sh [output-dir]
+# Usage: ./collect-from-machine.sh [--lists-only] [output-dir]
+#   --lists-only   write only list/manifest files (apt, snap, flatpak, pip, pipx, meta); no downloads
 # Default output: offline-bundle/clone-cache/
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUNDLE_DIR="$(cd "$SCRIPT_DIR" && pwd)"
 ROOT_DIR="$(cd "$BUNDLE_DIR/.." && pwd)"
-CACHE_ROOT="${1:-$BUNDLE_DIR/clone-cache}"
+LISTS_ONLY=0
+CACHE_ROOT=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --lists-only) LISTS_ONLY=1; shift ;;
+    -h|--help)    echo "Usage: $0 [--lists-only] [output-dir]"; echo "  --lists-only  only write lists (no package downloads)"; exit 0 ;;
+    *)            CACHE_ROOT="$1"; shift ;;
+  esac
+done
+CACHE_ROOT="${CACHE_ROOT:-$BUNDLE_DIR/clone-cache}"
 # User to own cache files (in case sudo creates root-owned files); used for chown at end
 CACHE_OWNER_UID="${SUDO_UID:-$(id -u)}"
 CACHE_OWNER_GID="${SUDO_GID:-$(id -g)}"
@@ -46,6 +56,7 @@ UBUNTU_CODENAME="$(. /etc/os-release 2>/dev/null && printf '%s' "${VERSION_CODEN
 TIMESTAMP="$(date +%F-%H%M%S)"
 cat > "$META_DIR/collection-info.txt" <<META
 mode=clone-from-machine
+lists_only=$LISTS_ONLY
 collection_timestamp=$TIMESTAMP
 ubuntu_codename=$UBUNTU_CODENAME
 hostname=$(hostname)
@@ -61,7 +72,7 @@ log_info "Saving APT package list (apt-mark showmanual)"
 apt-mark showmanual 2>/dev/null | sort -u > "$APT_DIR/apt-manual.txt" || true
 dpkg --get-selections > "$APT_DIR/dpkg-selections.txt" 2>/dev/null || true
 
-if [[ -s "$APT_DIR/apt-manual.txt" ]]; then
+if [[ $LISTS_ONLY -eq 0 ]] && [[ -s "$APT_DIR/apt-manual.txt" ]]; then
   log_info "Downloading APT packages and dependencies into local cache"
   sudo apt-get update
   mapfile -t APT_MANUAL < "$APT_DIR/apt-manual.txt"
@@ -80,7 +91,7 @@ if have snap; then
   log_info "Saving snap manifest and downloading snaps"
   snap list --all > "$SNAP_DIR/snap-list.txt" 2>/dev/null || true
   awk 'NR>1 {print $1}' "$SNAP_DIR/snap-list.txt" 2>/dev/null | sort -u > "$SNAP_DIR/snap-names.txt" || true
-  if [[ -s "$SNAP_DIR/snap-names.txt" ]]; then
+  if [[ $LISTS_ONLY -eq 0 ]] && [[ -s "$SNAP_DIR/snap-names.txt" ]]; then
     while IFS= read -r snap_name; do
       [[ -z "$snap_name" ]] && continue
       log_info "Downloading snap: $snap_name"
@@ -93,31 +104,33 @@ fi
 if have flatpak; then
   log_info "Saving flatpak manifest and building bundles"
   flatpak list --app --columns=application,branch,installation > "$FLATPAK_DIR/flatpak-apps.tsv" 2>/dev/null || true
-  while IFS=$'\t' read -r app_id branch installation; do
-    [[ -z "${app_id:-}" ]] && continue
-    [[ "$app_id" == "Application ID" ]] && continue
-    bundle_name="${app_id//\//_}-${branch:-stable}-${installation:-system}.flatpak"
-    repo_path=""
-    if [[ "$installation" == "user" ]]; then
-      repo_path="$HOME/.local/share/flatpak/repo"
-    else
-      repo_path="/var/lib/flatpak/repo"
-    fi
-    if [[ -d "$repo_path" ]]; then
-      log_info "Bundling flatpak: $app_id ($installation)"
-      flatpak build-bundle "$repo_path" "$FLATPAK_DIR/$bundle_name" "$app_id" "${branch:-stable}" \
-        || log_warn "Could not bundle flatpak $app_id"
-    else
-      log_warn "Flatpak repo not found: $repo_path"
-    fi
-  done < "$FLATPAK_DIR/flatpak-apps.tsv" 2>/dev/null || true
+  if [[ $LISTS_ONLY -eq 0 ]]; then
+    while IFS=$'\t' read -r app_id branch installation; do
+      [[ -z "${app_id:-}" ]] && continue
+      [[ "$app_id" == "Application ID" ]] && continue
+      bundle_name="${app_id//\//_}-${branch:-stable}-${installation:-system}.flatpak"
+      repo_path=""
+      if [[ "$installation" == "user" ]]; then
+        repo_path="$HOME/.local/share/flatpak/repo"
+      else
+        repo_path="/var/lib/flatpak/repo"
+      fi
+      if [[ -d "$repo_path" ]]; then
+        log_info "Bundling flatpak: $app_id ($installation)"
+        flatpak build-bundle "$repo_path" "$FLATPAK_DIR/$bundle_name" "$app_id" "${branch:-stable}" \
+          || log_warn "Could not bundle flatpak $app_id"
+      else
+        log_warn "Flatpak repo not found: $repo_path"
+      fi
+    done < "$FLATPAK_DIR/flatpak-apps.tsv" 2>/dev/null || true
+  fi
 fi
 
 # Pip user packages
 if have python3 && python3 -m pip --version >/dev/null 2>&1; then
   log_info "Saving pip user manifest and downloading wheels"
   python3 -m pip freeze --user > "$PIP_DIR/pip-user-freeze.txt" 2>/dev/null || true
-  if [[ -s "$PIP_DIR/pip-user-freeze.txt" ]]; then
+  if [[ $LISTS_ONLY -eq 0 ]] && [[ -s "$PIP_DIR/pip-user-freeze.txt" ]]; then
     python3 -m pip download -r "$PIP_DIR/pip-user-freeze.txt" -d "$PIP_DIR/wheelhouse" \
       | tee "$LOG_DIR/pip-download.log" || log_warn "Some pip wheels could not be downloaded"
   fi
@@ -139,7 +152,7 @@ with open(dst, 'w', encoding='utf-8') as out:
         spec = meta.get('metadata', {}).get('main_package', {}).get('package_or_url') or name
         out.write(spec + '\n')
 PY
-    if [[ -s "$PIPX_DIR/pipx-specs.txt" ]]; then
+    if [[ $LISTS_ONLY -eq 0 ]] && [[ -s "$PIPX_DIR/pipx-specs.txt" ]]; then
       python3 -m pip download -d "$PIPX_DIR/wheelhouse" $(tr '\n' ' ' < "$PIPX_DIR/pipx-specs.txt") \
         | tee "$LOG_DIR/pipx-download.log" || log_warn "Some pipx wheels could not be downloaded"
     fi
@@ -148,7 +161,7 @@ fi
 
 # Download vendor packages from URL list (if manifest exists)
 VENDOR_URLS="$ROOT_DIR/manifests/vendor-download-urls.txt"
-if [[ -f "$VENDOR_URLS" ]] && have curl; then
+if [[ $LISTS_ONLY -eq 0 ]] && [[ -f "$VENDOR_URLS" ]] && have curl; then
   log_info "Downloading vendor packages from manifests/vendor-download-urls.txt"
   while IFS= read -r line || [[ -n "$line" ]]; do
     line="${line%%#*}"
@@ -173,27 +186,34 @@ if [[ -f "$VENDOR_URLS" ]] && have curl; then
 fi
 
 # Copy obvious installers from Downloads
-log_info "Copying manual installers from ~/Downloads (if present)"
-find "$HOME/Downloads" -maxdepth 1 -type f \( \
-  -iname '*.deb' -o -iname '*.AppImage' -o -iname '*.run' -o -iname '*.sh' \
-  -o -iname '*.tar.gz' -o -iname '*.tar.xz' -o -iname '*.zip' \
-\) -print0 2>/dev/null | while IFS= read -r -d '' file; do
-  cp -n "$file" "$MANUAL_DIR/" 2>/dev/null || true
-done
+if [[ $LISTS_ONLY -eq 0 ]]; then
+  log_info "Copying manual installers from ~/Downloads (if present)"
+  find "$HOME/Downloads" -maxdepth 1 -type f \( \
+    -iname '*.deb' -o -iname '*.AppImage' -o -iname '*.run' -o -iname '*.sh' \
+    -o -iname '*.tar.gz' -o -iname '*.tar.xz' -o -iname '*.zip' \
+  \) -print0 2>/dev/null | while IFS= read -r -d '' file; do
+    cp -n "$file" "$MANUAL_DIR/" 2>/dev/null || true
+  done
 
-cat > "$MANUAL_DIR/README.txt" <<'TXT'
+  cat > "$MANUAL_DIR/README.txt" <<'TXT'
 Manual installers (from clone). Add vendor .deb, AppImages, etc. here.
 See MANUAL-SOFTWARE-NOTES.txt for install steps.
 TXT
-[[ -f "$MANUAL_DIR/MANUAL-SOFTWARE-NOTES.txt" ]] || printf '%s\n' "# Add notes: installer name, how to install, root/license/post-install" > "$MANUAL_DIR/MANUAL-SOFTWARE-NOTES.txt"
+  [[ -f "$MANUAL_DIR/MANUAL-SOFTWARE-NOTES.txt" ]] || printf '%s\n' "# Add notes: installer name, how to install, root/license/post-install" > "$MANUAL_DIR/MANUAL-SOFTWARE-NOTES.txt"
 
-# Any root-owned files (e.g. apt/archives from sudo apt-get) must be owned by the invoker so find/sha256sum and copying work
-log_info "Fixing cache ownership"
-sudo chown -R "$CACHE_OWNER_UID:$CACHE_OWNER_GID" "$CACHE_ROOT" 2>/dev/null || true
+  # Any root-owned files (e.g. apt/archives from sudo apt-get) must be owned by the invoker so find/sha256sum and copying work
+  log_info "Fixing cache ownership"
+  sudo chown -R "$CACHE_OWNER_UID:$CACHE_OWNER_GID" "$CACHE_ROOT" 2>/dev/null || true
+fi
 
-# Checksums
+# Checksums (of list files when --lists-only; of full cache otherwise)
 log_info "Creating SHA256SUMS"
 (cd "$CACHE_ROOT" && find . -type f ! -name 'SHA256SUMS' -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS) || true
 
-log_info "Clone cache created at: $CACHE_ROOT"
-log_info "Copy clone-cache/ and install-from-clone-cache.sh to target; run: ./install-from-clone-cache.sh $CACHE_ROOT"
+if [[ $LISTS_ONLY -eq 1 ]]; then
+  log_info "Lists only: written to $CACHE_ROOT (no packages downloaded)"
+  log_info "Lists: apt/apt-manual.txt, apt/dpkg-selections.txt, snap/, flatpak/flatpak-apps.tsv, pip/, pipx/, meta/"
+else
+  log_info "Clone cache created at: $CACHE_ROOT"
+  log_info "Copy clone-cache/ and install-from-clone-cache.sh to target; run: ./install-from-clone-cache.sh $CACHE_ROOT"
+fi
