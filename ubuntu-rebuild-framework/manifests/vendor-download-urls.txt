@@ -8,28 +8,55 @@
 #
 # --- Curated list for the 20 packages apt could not re-download ---
 
+# balena-etcher (USB flasher)
+# https://etcher.balena.io/#download-etcher
+# https://github.com/balena-io/etcher/releases/download/v2.1.4/balenaEtcher-linux-x64-2.1.4.zip
 # balena-etcher (USB flasher) – SourceForge mirror
 https://sourceforge.net/projects/etcher.mirror/files/v2.1.4/balena-etcher_2.1.4_amd64.deb/download  balena-etcher_2.1.4_amd64.deb
 
 # brscan4 – Brother scanner: model-specific, download from https://support.brother.com/ then add .deb to vendor/ manually
 # dcpl2550dnpdrv:i386 – Printer driver: get from Brother/Canon support for your model
+# https://support.brother.com/g/b/downloadlist.aspx?c=us&lang=en&prod=dcpl2550dw_us&os=128
+
+
 # synaptics-repository-keyring – Add Synaptics repo then apt install; or skip if using displaylink only
+# https://www.synaptics.com/products/displaylink-graphics/downloads/ubuntu
+# https://www.synaptics.com/sites/default/files/Ubuntu/pool/stable/main/all/synaptics-repository-keyring.deb
+# https://www.synaptics.com/products/displaylink-usb-graphics-software-ubuntu-62?filetype=exe
 
 # Bruno (API client) – official downloads; amd64 .deb from usebruno.com
 # If no direct .deb link works, download from https://www.usebruno.com/downloads and place in vendor/
+# https://github.com/usebruno/bruno/releases/download/v3.1.4/bruno_3.1.4_amd64_linux.deb
+# https://github.com/usebruno/bruno/releases/download/v3.1.4/bruno_3.1.4_arm64_linux.deb
 
 # Caprine (Messenger) – GitHub releases; check https://github.com/sindresorhus/caprine/releases for latest .deb
+# https://github.com/sindresorhus/caprine/releases/latest
+# https://github.com/sindresorhus/caprine/releases/download/v2.61.0/caprine_2.61.0_amd64.deb
+
 # GitKraken – download from https://www.gitkraken.com/download then place .deb in vendor/
-# Pencil – deprecated; skip or use alternative
+# https://www.gitkraken.com/download/linux-deb
+
+# Pencil – deprecated; skip or use alternative 
+# https://pencil.evolus.vn/Downloads.html
+# https://pencil.evolus.vn/dl/V3.1.1.ga/Pencil_3.1.1.ga_amd64.deb
+
 # Viber – download from https://www.viber.com/en/download/ then place .deb in vendor/
+# https://www.viber.com/en/download/
+# https://download.cdn.viber.com/desktop/Linux/viber.AppImage
 
 # VS Code (code) – Microsoft redirect to latest .deb
 https://go.microsoft.com/fwlink/?LinkID=760868  code_amd64.deb
+# https://code.visualstudio.com/download
+https://code.visualstudio.com/thank-you?dv=linux64_deb
 
 # Docker Desktop
 https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
+# https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-linux-amd64
 
 # JD-GUI – GitHub releases or PPA; if needed get from https://github.com/java-decompiler/jd-gui/releases
+# https://github.com/java-decompiler/jd-gui/releases/download/v1.6.6/jd-gui-1.6.6.deb
+# https://github.com/java-decompiler/jd-gui/releases/latest
+
 # KSE (Key Store Explorer)
 https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse_5.6.1_all.deb
 
@@ -41,15 +68,29 @@ https://ftp.opera.com/pub/opera/desktop/128.0.5807.77/linux/opera-stable_128.0.5
 
 # PeaZip – SourceForge (GTK2 for GNOME/MATE/XFCE)
 https://sourceforge.net/projects/peazip/files/7.3.2/peazip_7.3.2.LINUX.x86_64.GTK2.deb/download  peazip_amd64.deb
+# https://peazip.github.io/peazip-64bit.html
+# https://github.com/peazip/PeaZip/releases/download/10.9.0/peazip_10.9.0.LINUX.GTK2-1_amd64.deb
+# https://github.com/peazip/PeaZip/releases/latest
 
 # ProtonVPN – repo release package (enables apt install protonvpn; for GUI use proton-vpn-gnome-desktop from repo)
 https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.8_all.deb
+# https://protonvpn.com/download
+# https://protonvpn.com/support/linux-vpn-setup
+# https://repo.protonvpn.com/debian/dists/stable/main/binary-all/
 
 # VeraCrypt – update version/path when newer is released; Ubuntu 24.04
 https://sourceforge.net/projects/veracrypt/files/VeraCrypt%201.26.24/Linux/veracrypt-1.26.24-Ubuntu-24.04-amd64.deb/download  veracrypt-1.26.24-Ubuntu-24.04-amd64.deb
+# https://veracrypt.io/en/Downloads.html
+# https://launchpad.net/veracrypt/trunk/1.26.24/+download/VeraCrypt-1.26.24-x86_64.AppImage
+# https://launchpad.net/veracrypt/trunk/1.26.24/+download/veracrypt-1.26.24-Debian-13-amd64.deb
+# https://launchpad.net/veracrypt/trunk/1.26.24/+download/veracrypt-console-1.26.24-Debian-13-amd64.deb
+# https://launchpad.net/veracrypt/trunk/1.26.24/+download/veracrypt-1.26.24-Ubuntu-24.04-amd64.deb
+# https://launchpad.net/veracrypt/trunk/1.26.24/+download/veracrypt-console-1.26.24-Ubuntu-24.04-amd64.deb
 
 # XnView MP
 https://download.xnview.com/XnViewMP-linux-x64.deb
 
 # Zoom – version in path changes; get latest from https://zoom.us/download?os=linux or update 6.5.3.2773 below
 https://cdn.zoom.us/prod/6.5.3.2773/zoom_amd64.deb
+
+
