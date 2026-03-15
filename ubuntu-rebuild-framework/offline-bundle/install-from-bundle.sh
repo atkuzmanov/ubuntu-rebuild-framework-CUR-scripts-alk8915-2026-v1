@@ -15,6 +15,11 @@ CACHE_DIR="$BUNDLE_DIR/cache"
 source "$ROOT_DIR/lib/common.sh"
 source "$ROOT_DIR/lib/logging.sh"
 
+# Verify cache integrity if checksums exist (from CG kit)
+if [[ -f "$CACHE_DIR/SHA256SUMS" ]]; then
+  (cd "$CACHE_DIR" && sha256sum -c SHA256SUMS) || log_warn "Checksum verification had errors; continuing anyway."
+fi
+
 PROFILE=""
 usage() {
   echo "Usage: $0 --profile <name>"
@@ -77,7 +82,12 @@ if [[ -f "$CACHE_DIR/apt/Packages.gz" ]] && ls "$CACHE_DIR/apt/"*.deb >/dev/null
   fi
 
   # Install from local repo (file:// - no network needed)
-  run_cmd sudo apt-get install -y --allow-unauthenticated "${apt_pkgs[@]}"
+  if ! run_cmd sudo apt-get install -y --allow-unauthenticated "${apt_pkgs[@]}"; then
+    # Fallback: install .deb files directly then fix deps (from CG kit)
+    log_warn "APT install had issues; attempting local dpkg pass + fix"
+    run_cmd sudo dpkg -i "$CACHE_DIR/apt/"*.deb 2>/dev/null || true
+    run_cmd sudo apt-get install -f -y 2>/dev/null || true
+  fi
   # Fix any broken deps
   run_cmd sudo apt-get install -f -y 2>/dev/null || true
 else
@@ -126,6 +136,15 @@ if want_feature INSTALL_FLATPAKS && command -v flatpak >/dev/null 2>&1; then
     [[ -f "$bundle" ]] || continue
     run_cmd flatpak install -y --or-update "$bundle"
   done
+fi
+
+# ---------------------------------------------------------------------------
+# 3b. PIP --user: install from cache (option B)
+# ---------------------------------------------------------------------------
+if [[ -d "$CACHE_DIR/pip/wheelhouse" && -f "$CACHE_DIR/pip/pip-user-freeze.txt" ]] && command -v python3 >/dev/null 2>&1; then
+  log_section "Pip user: installing from cache"
+  python3 -m pip install --user --no-index --find-links "$CACHE_DIR/pip/wheelhouse" -r "$CACHE_DIR/pip/pip-user-freeze.txt" \
+    || log_warn "Some pip user packages could not be installed offline"
 fi
 
 # ---------------------------------------------------------------------------

@@ -33,10 +33,21 @@ PROFILE_FILE="$ROOT_DIR/profiles/${PROFILE}.env"
 load_profile "$PROFILE_FILE"
 log_info "Creating offline bundle for profile: $PROFILE"
 
-# Create cache directories
-for d in apt apt-keys snap flatpak pipx uv npm cargo vendor; do
+# Create cache directories (meta from CG kit: record source machine info for debugging; pip for --user)
+for d in apt apt-keys snap flatpak pip pipx uv npm cargo vendor meta; do
   mkdir -p "$CACHE_DIR/$d"
 done
+
+# Meta: record bundle origin (from CG kit)
+UBUNTU_CODENAME="$(. /etc/os-release 2>/dev/null && printf '%s' "${VERSION_CODENAME:-unknown}")"
+TIMESTAMP="$(date +%F-%H%M%S)"
+cat > "$CACHE_DIR/meta/collection-info.txt" <<META
+profile=$PROFILE
+collection_timestamp=$TIMESTAMP
+ubuntu_codename=$UBUNTU_CODENAME
+hostname=$(hostname)
+kernel=$(uname -r)
+META
 
 # ---------------------------------------------------------------------------
 # 1. APT: configure repos, update, download packages
@@ -120,11 +131,36 @@ if want_feature INSTALL_FLATPAKS && command -v flatpak >/dev/null 2>&1; then
     flatpak install -y flathub "$pkg" 2>/dev/null || log_warn "Flatpak install failed: $pkg"
     if flatpak info "$pkg" >/dev/null 2>&1; then
       ref="$(flatpak info --show-ref "$pkg" 2>/dev/null)"
+      installation=""
+      if flatpak info "$pkg" 2>/dev/null | grep -q '^Installation: user'; then
+        installation="user"
+      fi
       if [[ -n "$ref" ]]; then
-        run_cmd flatpak build-bundle /var/lib/flatpak/repo "$CACHE_DIR/flatpak/${pkg//[^a-zA-Z0-9._-]/_}.flatpak" "$ref" 2>/dev/null || log_warn "Flatpak bundle failed: $pkg"
+        if [[ "$installation" == "user" ]] && [[ -d "$HOME/.local/share/flatpak/repo" ]]; then
+          run_cmd flatpak build-bundle "$HOME/.local/share/flatpak/repo" "$CACHE_DIR/flatpak/${pkg//[^a-zA-Z0-9._-]/_}.flatpak" "$ref" 2>/dev/null || log_warn "Flatpak bundle failed: $pkg"
+        else
+          run_cmd flatpak build-bundle /var/lib/flatpak/repo "$CACHE_DIR/flatpak/${pkg//[^a-zA-Z0-9._-]/_}.flatpak" "$ref" 2>/dev/null || log_warn "Flatpak bundle failed: $pkg"
+        fi
       fi
     fi
   done < "$ROOT_DIR/manifests/flatpak-packages.txt"
+fi
+
+# ---------------------------------------------------------------------------
+# 3b. PIP --user: download from manifest into wheelhouse (option B)
+# ---------------------------------------------------------------------------
+if [[ -f "$ROOT_DIR/manifests/pip-user-packages.txt" ]] && command -v python3 >/dev/null 2>&1 && python3 -m pip --version >/dev/null 2>&1; then
+  pip_user_list=()
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" || "$pkg" =~ ^# ]] && continue
+    pip_user_list+=("$pkg")
+  done < "$ROOT_DIR/manifests/pip-user-packages.txt"
+  if ((${#pip_user_list[@]} > 0)); then
+    log_section "Pip user: downloading packages from manifest"
+    printf '%s\n' "${pip_user_list[@]}" > "$CACHE_DIR/pip/pip-user-freeze.txt"
+    python3 -m pip download -r "$CACHE_DIR/pip/pip-user-freeze.txt" -d "$CACHE_DIR/pip/wheelhouse" \
+      || log_warn "Some pip user wheels could not be downloaded"
+  fi
 fi
 
 # ---------------------------------------------------------------------------
@@ -183,12 +219,29 @@ if want_feature INSTALL_CARGO && command -v cargo >/dev/null 2>&1; then
 fi
 
 # ---------------------------------------------------------------------------
-# 8. VENDOR: copy manual installers
+# 8. VENDOR: copy manual installers (from CG kit: README + notes template)
 # ---------------------------------------------------------------------------
 if [[ -n "${OFFLINE_VENDOR_SOURCE_DIR:-}" && -d "$OFFLINE_VENDOR_SOURCE_DIR" ]]; then
   log_section "Vendor: copying from $OFFLINE_VENDOR_SOURCE_DIR"
   run_cmd cp -a "$OFFLINE_VENDOR_SOURCE_DIR"/* "$CACHE_DIR/vendor/" 2>/dev/null || true
 fi
+
+# Vendor README and notes template (from CG kit)
+cat > "$CACHE_DIR/vendor/README.txt" <<'VENDORREADME'
+Put here any installers that were originally downloaded manually, for example:
+- vendor .deb packages (Chrome, etc.)
+- AppImage files
+- .run installers
+- tar.gz / zip archives for tools you unpack manually
+
+Optional: add MANUAL-SOFTWARE-NOTES.txt with what each installer is, how to install it,
+whether it needs root or a license key, and any post-install steps.
+VENDORREADME
+[[ -f "$CACHE_DIR/vendor/MANUAL-SOFTWARE-NOTES.txt" ]] || printf '%s\n' "# Add notes: installer name, how to install, root/license/post-install" > "$CACHE_DIR/vendor/MANUAL-SOFTWARE-NOTES.txt"
+
+# Create checksum manifest for integrity verification on target (from CG kit idea)
+log_section "Creating checksum manifest"
+(cd "$CACHE_DIR" && find . -type f ! -name 'SHA256SUMS' -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS) || true
 
 log_section "Download complete"
 log_info "Cache size: $(du -sh "$CACHE_DIR" 2>/dev/null | cut -f1)"

@@ -116,6 +116,20 @@ Examples:
 - git configuration
 - application dotfiles
 
+## Offline Bundles
+
+Software added to manifests is included when you run:
+
+```bash
+offline-bundle/download-bundle.sh --profile laptop
+```
+
+For vendor software (manual .deb, AppImage, etc.), place installers in a folder and either copy them to `offline-bundle/cache/vendor/` before running `install-from-bundle.sh`, or set `OFFLINE_VENDOR_SOURCE_DIR` when downloading:
+
+```bash
+OFFLINE_VENDOR_SOURCE_DIR="$HOME/Downloads/vendor" offline-bundle/download-bundle.sh --profile laptop
+```
+
 ## Updating Manifests
 
 If you manually install software outside the rebuild framework, run:

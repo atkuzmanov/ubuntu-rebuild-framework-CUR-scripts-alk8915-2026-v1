@@ -9,6 +9,16 @@ This framework is designed around a simple rule:
 
 Chezmoi is a stage in the process, not the foundation of the process.
 
+## Offline / air-gapped setup
+
+To prepare for installations **without internet** (e.g. USB, external HDD):
+
+1. Run `./offline-bundle/download-bundle.sh --profile laptop` (while online)
+2. Copy the entire `offline-bundle/` folder (including `cache/`) to external storage
+3. On the target machine: `./install-from-bundle.sh --profile laptop`
+
+See `offline-bundle/README.md` for details.
+
 ## Directory tree
 
 ```text
@@ -33,6 +43,10 @@ ubuntu-rebuild-framework/
 │   ├── laptop.env
 │   ├── vm.env
 │   └── workstation.env
+├── offline-bundle/
+│   ├── download-bundle.sh     # Download all packages (run when online)
+│   ├── install-from-bundle.sh # Install from local cache (run when offline)
+│   └── cache/                # Populated by download-bundle.sh
 ├── scripts/
 │   ├── 00-preflight.sh
 │   ├── 01-system-prep.sh
