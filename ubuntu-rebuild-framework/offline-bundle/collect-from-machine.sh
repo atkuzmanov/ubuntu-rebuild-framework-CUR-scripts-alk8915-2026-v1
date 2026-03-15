@@ -159,6 +159,12 @@ PY
   fi
 fi
 
+# Cargo / uv / npm: list only (no download; install-from-clone-cache does not use these)
+log_info "Saving cargo, uv, npm lists to meta/"
+cargo install --list 2>/dev/null | awk -F' ' '/ v[0-9]/{print $1}' | sort -u > "$META_DIR/cargo-packages.txt" || true
+uv tool list 2>/dev/null | awk '{print $1}' | sort -u > "$META_DIR/uv-tools.txt" || true
+npm list -g --depth=0 2>/dev/null | sed '1,1d' | sed 's/.* //' | cut -d@ -f1 | sort -u > "$META_DIR/npm-global-packages.txt" || true
+
 # Download vendor packages from URL list (if manifest exists)
 VENDOR_URLS="$ROOT_DIR/manifests/vendor-download-urls.txt"
 if [[ $LISTS_ONLY -eq 0 ]] && [[ -f "$VENDOR_URLS" ]] && have curl; then
@@ -212,7 +218,7 @@ log_info "Creating SHA256SUMS"
 
 if [[ $LISTS_ONLY -eq 1 ]]; then
   log_info "Lists only: written to $CACHE_ROOT (no packages downloaded)"
-  log_info "Lists: apt/apt-manual.txt, apt/dpkg-selections.txt, snap/, flatpak/flatpak-apps.tsv, pip/, pipx/, meta/"
+  log_info "Lists: apt/, snap/, flatpak/, pip/, pipx/, meta/ (incl. cargo, uv, npm)"
 else
   log_info "Clone cache created at: $CACHE_ROOT"
   log_info "Copy clone-cache/ and install-from-clone-cache.sh to target; run: ./install-from-clone-cache.sh $CACHE_ROOT"
