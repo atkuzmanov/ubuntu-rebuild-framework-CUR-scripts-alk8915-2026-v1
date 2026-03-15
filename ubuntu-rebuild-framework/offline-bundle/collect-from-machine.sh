@@ -146,6 +146,32 @@ PY
   fi
 fi
 
+# Download vendor packages from URL list (if manifest exists)
+VENDOR_URLS="$ROOT_DIR/manifests/vendor-download-urls.txt"
+if [[ -f "$VENDOR_URLS" ]] && have curl; then
+  log_info "Downloading vendor packages from manifests/vendor-download-urls.txt"
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%%#*}"
+    line="$(printf '%s' "$line" | tr -s '\t ' ' ' | sed 's/^ *//;s/ *$//')"
+    [[ -z "$line" ]] && continue
+    url="${line%% *}"
+    rest="${line#* }"
+    rest="$(printf '%s' "$rest" | sed 's/^ *//;s/ *$//')"
+    if [[ -n "$rest" && "$rest" != "$url" ]]; then
+      outname="$rest"
+    else
+      outname="$(basename "${url%%\?*}")"
+    fi
+    [[ -z "$outname" ]] && continue
+    outpath="$MANUAL_DIR/$outname"
+    if curl -L -f -s -S -o "$outpath" "$url" 2>/dev/null; then
+      log_info "Downloaded: $outname"
+    else
+      log_warn "Failed to download: $url"
+    fi
+  done < "$VENDOR_URLS"
+fi
+
 # Copy obvious installers from Downloads
 log_info "Copying manual installers from ~/Downloads (if present)"
 find "$HOME/Downloads" -maxdepth 1 -type f \( \

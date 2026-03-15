@@ -54,6 +54,14 @@ offline-bundle/
 └── clone-cache/              # Clone-from-machine output (apt/archives, apt-manual.txt, snap/, flatpak/, pip/, pipx/, vendor/, meta/, SHA256SUMS)
 ```
 
+## Vendor URL list (clone-from-machine)
+
+To automate downloads of packages that apt could not fetch (e.g. third-party .deb), add their **direct download URLs** to **`manifests/vendor-download-urls.txt`**. When you run `collect-from-machine.sh`, it will download each URL into the cache `vendor/` folder.
+
+- One URL per line; lines starting with `#` and empty lines are ignored.
+- Optional second column: filename to save as (e.g. `https://example.com/path/file.deb  zoom.deb`). If omitted, the filename is taken from the URL.
+- Requires `curl`. Add or update lines, then run `./collect-from-machine.sh` again; new files appear in `cache/vendor/`.
+
 ## Manual / vendor software
 
 Place manually downloaded installers (`.deb`, `.AppImage`, etc.) in a folder and either:

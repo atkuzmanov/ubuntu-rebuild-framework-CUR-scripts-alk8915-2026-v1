@@ -1,0 +1,55 @@
+# Vendor packages: direct download URLs for the clone-cache vendor folder
+# Used by: offline-bundle/collect-from-machine.sh (downloads into cache/vendor/)
+#
+# Format: one URL per line. Optional second column = filename to save as.
+# Lines starting with # and empty lines are ignored.
+# Update URLs when new versions are released (especially Zoom, MongoDB Compass, Opera).
+# If a URL fails (e.g. SourceForge sometimes returns HTML), download that file in a browser and put it in cache/vendor/ manually.
+#
+# --- Curated list for the 20 packages apt could not re-download ---
+
+# balena-etcher (USB flasher) – SourceForge mirror
+https://sourceforge.net/projects/etcher.mirror/files/v2.1.4/balena-etcher_2.1.4_amd64.deb/download  balena-etcher_2.1.4_amd64.deb
+
+# brscan4 – Brother scanner: model-specific, download from https://support.brother.com/ then add .deb to vendor/ manually
+# dcpl2550dnpdrv:i386 – Printer driver: get from Brother/Canon support for your model
+# synaptics-repository-keyring – Add Synaptics repo then apt install; or skip if using displaylink only
+
+# Bruno (API client) – official downloads; amd64 .deb from usebruno.com
+# If no direct .deb link works, download from https://www.usebruno.com/downloads and place in vendor/
+
+# Caprine (Messenger) – GitHub releases; check https://github.com/sindresorhus/caprine/releases for latest .deb
+# GitKraken – download from https://www.gitkraken.com/download then place .deb in vendor/
+# Pencil – deprecated; skip or use alternative
+# Viber – download from https://www.viber.com/en/download/ then place .deb in vendor/
+
+# VS Code (code) – Microsoft redirect to latest .deb
+https://go.microsoft.com/fwlink/?LinkID=760868  code_amd64.deb
+
+# Docker Desktop
+https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
+
+# JD-GUI – GitHub releases or PPA; if needed get from https://github.com/java-decompiler/jd-gui/releases
+# KSE (Key Store Explorer)
+https://github.com/kaikramer/keystore-explorer/releases/download/v5.6.1/kse_5.6.1_all.deb
+
+# MongoDB Compass – update version number when newer is released
+https://downloads.mongodb.com/compass/mongodb-compass_1.46.10_amd64.deb
+
+# Opera – version in URL changes; check https://ftp.opera.com/pub/opera/desktop/ for latest
+https://ftp.opera.com/pub/opera/desktop/128.0.5807.77/linux/opera-stable_128.0.5807.77_amd64.deb  opera-stable_amd64.deb
+
+# PeaZip – SourceForge (GTK2 for GNOME/MATE/XFCE)
+https://sourceforge.net/projects/peazip/files/7.3.2/peazip_7.3.2.LINUX.x86_64.GTK2.deb/download  peazip_amd64.deb
+
+# ProtonVPN – repo release package (enables apt install protonvpn; for GUI use proton-vpn-gnome-desktop from repo)
+https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.8_all.deb
+
+# VeraCrypt – update version/path when newer is released; Ubuntu 24.04
+https://sourceforge.net/projects/veracrypt/files/VeraCrypt%201.26.24/Linux/veracrypt-1.26.24-Ubuntu-24.04-amd64.deb/download  veracrypt-1.26.24-Ubuntu-24.04-amd64.deb
+
+# XnView MP
+https://download.xnview.com/XnViewMP-linux-x64.deb
+
+# Zoom – version in path changes; get latest from https://zoom.us/download?os=linux or update 6.5.3.2773 below
+https://cdn.zoom.us/prod/6.5.3.2773/zoom_amd64.deb
