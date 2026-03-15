@@ -210,6 +210,17 @@ TXT
   # Any root-owned files (e.g. apt/archives from sudo apt-get) must be owned by the invoker so find/sha256sum and copying work
   log_info "Fixing cache ownership"
   sudo chown -R "$CACHE_OWNER_UID:$CACHE_OWNER_GID" "$CACHE_ROOT" 2>/dev/null || true
+
+  # Create software-lists/ with the same list files as --lists-only (one place to view what's in the cache)
+  log_info "Creating software-lists folder"
+  LISTS_DIR="$CACHE_ROOT/software-lists"
+  mkdir -p "$LISTS_DIR/apt" "$LISTS_DIR/snap" "$LISTS_DIR/flatpak" "$LISTS_DIR/pip" "$LISTS_DIR/pipx" "$LISTS_DIR/meta"
+  cp "$APT_DIR/apt-manual.txt" "$APT_DIR/dpkg-selections.txt" "$LISTS_DIR/apt/" 2>/dev/null || true
+  cp "$SNAP_DIR/snap-list.txt" "$SNAP_DIR/snap-names.txt" "$LISTS_DIR/snap/" 2>/dev/null || true
+  cp "$FLATPAK_DIR/flatpak-apps.tsv" "$LISTS_DIR/flatpak/" 2>/dev/null || true
+  cp "$PIP_DIR/pip-user-freeze.txt" "$LISTS_DIR/pip/" 2>/dev/null || true
+  cp "$PIPX_DIR/pipx-specs.txt" "$PIPX_DIR/pipx-list.json" "$LISTS_DIR/pipx/" 2>/dev/null || true
+  cp "$META_DIR"/* "$LISTS_DIR/meta/" 2>/dev/null || true
 fi
 
 # Checksums (of list files when --lists-only; of full cache otherwise)
@@ -221,5 +232,6 @@ if [[ $LISTS_ONLY -eq 1 ]]; then
   log_info "Lists: apt/, snap/, flatpak/, pip/, pipx/, meta/ (incl. cargo, uv, npm)"
 else
   log_info "Clone cache created at: $CACHE_ROOT"
+  log_info "Software lists (same as --lists-only) are in: $CACHE_ROOT/software-lists/"
   log_info "Copy clone-cache/ and install-from-clone-cache.sh to target; run: ./install-from-clone-cache.sh $CACHE_ROOT"
 fi
