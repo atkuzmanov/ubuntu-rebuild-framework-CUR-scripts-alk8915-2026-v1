@@ -119,7 +119,7 @@ if want_feature INSTALL_SNAPS && command -v snap >/dev/null 2>&1; then
       fi
       extra="${snap_args[$pkg]:-}"
       if [[ -n "$extra" ]]; then
-        run_cmd sudo snap install "$snapfile" $extra 2>/dev/null || run_cmd sudo snap install "$snapfile" --dangerous $extra
+        run_cmd sudo snap install "$snapfile" "$extra" 2>/dev/null || run_cmd sudo snap install "$snapfile" --dangerous "$extra"
       else
         run_cmd sudo snap install "$snapfile" 2>/dev/null || run_cmd sudo snap install "$snapfile" --dangerous
       fi

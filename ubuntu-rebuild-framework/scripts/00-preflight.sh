@@ -19,9 +19,9 @@ if ! grep -qi ubuntu /etc/os-release; then
   die "This framework currently targets Ubuntu"
 fi
 
-log_info "OS: $(. /etc/os-release && echo "$PRETTY_NAME")"
-log_info "User: $USER"
-log_info "Home: $HOME"
-log_info "Profile: $PROFILE"
+log_info "OS: $(. /etc/os-release 2>/dev/null && echo "${PRETTY_NAME:-unknown}")"
+log_info "User: ${USER:-$(whoami)}"
+log_info "Home: ${HOME:-<unset>}"
+log_info "Profile: ${PROFILE:-<not set>}"
 
 run_cmd sudo -v

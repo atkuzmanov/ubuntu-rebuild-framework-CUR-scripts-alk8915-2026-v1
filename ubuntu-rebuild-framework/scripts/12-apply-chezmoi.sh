@@ -16,7 +16,7 @@ if [[ -z "$CHEZMOI_REPO" ]]; then
   exit 0
 fi
 
-if [[ ! -d "$HOME/.local/share/chezmoi" ]]; then
+if [[ ! -d "${HOME:-}/.local/share/chezmoi" ]]; then
   run_cmd chezmoi init "$CHEZMOI_REPO"
 else
   log_info "chezmoi source already initialized"

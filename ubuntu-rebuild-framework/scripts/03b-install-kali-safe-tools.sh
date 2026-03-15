@@ -49,11 +49,11 @@ if want_feature INSTALL_WIRESHARK && dpkg -s wireshark-common >/dev/null 2>&1; t
     fi
   fi
 
-  if groups "$USER" | grep -qw wireshark; then
+  if groups "${USER:-$(whoami)}" | grep -qw wireshark; then
     log_info "User already in wireshark group"
   else
-    if ! run_cmd sudo usermod -aG wireshark "$USER"; then
-      log_warn "Failed to add $USER to wireshark group"
+    if ! run_cmd sudo usermod -aG wireshark "${USER:-$(whoami)}"; then
+      log_warn "Failed to add ${USER:-$(whoami)} to wireshark group"
     else
       log_warn "You may need to log out and back in for wireshark group membership to apply"
     fi

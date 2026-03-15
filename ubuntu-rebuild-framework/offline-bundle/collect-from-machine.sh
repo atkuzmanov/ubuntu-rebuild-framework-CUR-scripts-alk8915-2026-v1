@@ -110,13 +110,13 @@ if have flatpak; then
       [[ "$app_id" == "Application ID" ]] && continue
       bundle_name="${app_id//\//_}-${branch:-stable}-${installation:-system}.flatpak"
       repo_path=""
-      if [[ "$installation" == "user" ]]; then
+      if [[ "${installation:-}" == "user" ]]; then
         repo_path="$HOME/.local/share/flatpak/repo"
       else
         repo_path="/var/lib/flatpak/repo"
       fi
       if [[ -d "$repo_path" ]]; then
-        log_info "Bundling flatpak: $app_id ($installation)"
+        log_info "Bundling flatpak: $app_id (${installation:-system})"
         flatpak build-bundle "$repo_path" "$FLATPAK_DIR/$bundle_name" "$app_id" "${branch:-stable}" \
           || log_warn "Could not bundle flatpak $app_id"
       else
